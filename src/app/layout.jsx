@@ -1,4 +1,5 @@
 import { Poppins, Roboto } from "next/font/google";
+import { AuthGate } from "@/components/AuthGate";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -21,7 +22,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} ${roboto.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <AuthGate>{children}</AuthGate>
+      </body>
     </html>
   );
 }

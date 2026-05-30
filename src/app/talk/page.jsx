@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Mic, Square } from "lucide-react";
 import { AppShell, Disclaimer, EmergencyShortcut, PageHeader, SoftCard } from "@/components/AppShell";
 import { DoctorAvatar } from "@/components/DoctorAvatar";
-import { checkEmergency, hasEmergencyLanguage, transcribeAudio } from "@/lib/api";
+import { checkEmergency, getSelectedChildId, hasEmergencyLanguage, transcribeAudio } from "@/lib/api";
 
 export default function TalkPage() {
   const [recording, setRecording] = useState(false);
@@ -27,6 +27,10 @@ export default function TalkPage() {
 
   async function startRecording() {
     setError("");
+    if (!getSelectedChildId()) {
+      setError("Please add/select a child profile first from Profile.");
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
@@ -71,7 +75,7 @@ export default function TalkPage() {
 
       <SoftCard className="cloud-card mt-5 grid items-center gap-8 text-center lg:grid-cols-2 lg:text-left">
         <div>
-          <DoctorAvatar />
+          <DoctorAvatar mood="talking" />
         </div>
         <div>
         <h2 className="mt-5 text-3xl font-extrabold lg:text-5xl">Tap to Speak</h2>

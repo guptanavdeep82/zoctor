@@ -29,7 +29,7 @@ export default function SplashPage() {
               </div>
 
               <Link
-                href="/home"
+                href="/login"
                 className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-care-blue px-6 py-4 text-lg font-extrabold text-white shadow-xl shadow-sky-300 transition hover:-translate-y-0.5 hover:bg-sky-500 sm:w-auto sm:min-w-64"
               >
                 <Mic className="h-6 w-6" />

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Baby, MoonStar, Pill } from "lucide-react";
 import { AppShell, EmergencyShortcut, PageHeader, SoftCard } from "@/components/AppShell";
-import { fetchTips } from "@/lib/api";
+import { fetchTips, fetchTipsByCategory } from "@/lib/api";
 
 const fallbackTips = [
   { title: "Baby Feeding Tips", body: "Offer small, frequent feeds and watch wet diapers.", icon: Baby, color: "bg-emerald-100 text-emerald-600" },
@@ -13,6 +13,7 @@ const fallbackTips = [
 
 export default function TipsPage() {
   const [tips, setTips] = useState(fallbackTips);
+  const [category, setCategory] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -21,7 +22,7 @@ export default function TipsPage() {
 
     async function loadTips() {
       try {
-        const data = await fetchTips();
+        const data = category === "all" ? await fetchTips() : await fetchTipsByCategory(category);
         const list = Array.isArray(data) ? data : data?.tips;
         if (mounted && Array.isArray(list) && list.length > 0) {
           setTips(
@@ -44,7 +45,7 @@ export default function TipsPage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [category]);
 
   return (
     <AppShell>
@@ -53,6 +54,20 @@ export default function TipsPage() {
         subtitle="Simple care ideas for everyday routines."
         action={<EmergencyShortcut className="px-3 py-2 text-xs sm:px-4 sm:py-3 sm:text-sm" />}
       />
+
+      <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
+        {["all", "nutrition", "sleep", "cold", "medicine"].map((item) => (
+          <button
+            key={item}
+            onClick={() => setCategory(item)}
+            className={`shrink-0 rounded-full px-4 py-2 text-xs font-extrabold shadow-sm ${
+              category === item ? "bg-care-blue text-white" : "bg-white text-sky-600"
+            }`}
+          >
+            {item[0].toUpperCase() + item.slice(1)}
+          </button>
+        ))}
+      </div>
 
       {loading ? (
         <div className="grid gap-4 md:grid-cols-3">

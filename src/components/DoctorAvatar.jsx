@@ -1,37 +1,38 @@
 import { motion } from "framer-motion";
 
+const moodConfig = {
+  happy: { emoji: "😊", label: "Happy child doctor", badge: "bg-emerald-100 text-emerald-600" },
+  talking: { emoji: "💬", label: "Talking child doctor", badge: "bg-sky-100 text-care-blue" },
+  concerned: { emoji: "😟", label: "Concerned child doctor", badge: "bg-amber-100 text-amber-600" },
+  emergency: { emoji: "🚨", label: "Emergency child doctor", badge: "bg-red-100 text-red-600" },
+};
+
 export function DoctorAvatar({ size = "lg", mood = "happy", animated = true }) {
-  const dimensions = size === "sm" ? "h-14 w-14" : size === "md" ? "h-24 w-24" : "h-44 w-44";
-  const face = mood === "concerned" ? "after:content-['o']" : "after:content-[')']";
+  const dimensions = size === "sm" ? "h-16 w-24" : size === "md" ? "h-28 w-40" : "h-48 w-72";
+  const config = moodConfig[mood] || moodConfig.happy;
 
   return (
     <motion.div
-      className={`${dimensions} avatar-float relative mx-auto rounded-[2rem] bg-gradient-to-b from-sky-100 to-white p-2 shadow-xl shadow-sky-200/70`}
-      animate={animated ? { rotate: [0, -1.5, 1.5, 0] } : undefined}
+      className={`${dimensions} avatar-float relative mx-auto`}
+      animate={animated ? { y: [0, -6, 0], rotate: [0, -0.7, 0.7, 0] } : undefined}
       transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
-      aria-label="Animated doctor avatar"
+      aria-label={config.label}
       role="img"
     >
-      <div className="cloud-card relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/80">
-        <div className="absolute left-1/2 top-[14%] h-[52%] w-[58%] -translate-x-1/2 rounded-full bg-[#ffd6ad] shadow-inner">
-          <span className="absolute left-[24%] top-[42%] h-3 w-3 rounded-full bg-sky-950" />
-          <span className="absolute right-[24%] top-[42%] h-3 w-3 rounded-full bg-sky-950" />
-          <span
-            className={`absolute left-1/2 top-[57%] -translate-x-1/2 text-2xl font-bold leading-none text-rose-500 ${face}`}
-          />
-          <span className="absolute left-[12%] top-[50%] h-3 w-3 rounded-full bg-rose-300/70" />
-          <span className="absolute right-[12%] top-[50%] h-3 w-3 rounded-full bg-rose-300/70" />
-        </div>
-        <div className="absolute left-1/2 top-[10%] h-[22%] w-[64%] -translate-x-1/2 rounded-t-full bg-[#243d73]" />
-        <div className="absolute left-1/2 top-[4%] h-[34%] w-[16%] -translate-x-1/2 rounded-full border-4 border-[#243d73] bg-white">
-          <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-care-blue" />
-        </div>
-        <div className="absolute bottom-[-7%] left-1/2 h-[42%] w-[76%] -translate-x-1/2 rounded-t-[2rem] bg-white">
-          <div className="mx-auto h-full w-[32%] bg-care-blue" />
-          <span className="absolute left-[20%] top-[16%] h-[46%] w-1 rounded-full bg-sky-800" />
-          <span className="absolute right-[20%] top-[16%] h-[46%] w-1 rounded-full bg-sky-800" />
-        </div>
+      <div className="h-full w-full overflow-hidden rounded-[1.6rem] bg-white p-1 shadow-xl shadow-sky-200/70">
+        <img
+          src="/doctor-avatar-reference.png"
+          alt={config.label}
+          className="h-full w-full rounded-[1.35rem] object-cover"
+          draggable="false"
+        />
       </div>
+
+      <span
+        className={`absolute -right-2 -top-2 grid h-9 w-9 place-items-center rounded-full border-2 border-white text-lg shadow-lg ${config.badge}`}
+      >
+        {config.emoji}
+      </span>
     </motion.div>
   );
 }

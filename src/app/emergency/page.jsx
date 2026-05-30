@@ -22,7 +22,7 @@ export default function EmergencyPage() {
 
           <div>
           <div className="my-7">
-            <DoctorAvatar mood="concerned" />
+            <DoctorAvatar mood="emergency" />
           </div>
 
           <a

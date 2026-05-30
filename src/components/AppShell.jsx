@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { AlertTriangle, Home, Heart, MessageCircle, Mic, Stethoscope, UserRound } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { AlertTriangle, Home, Heart, LogOut, MessageCircle, Mic, Stethoscope, UserRound } from "lucide-react";
+import { fetchChildProfiles, getSelectedChildId, getStoredUser, logoutParent, setSelectedChildId } from "@/lib/api";
 
 const navItems = [
   { href: "/home", label: "Home", icon: Home },
@@ -59,6 +61,31 @@ export function MobileBrandBar() {
 
 export function DesktopSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [children, setChildren] = useState([]);
+  const [selectedChild, setSelectedChild] = useState("");
+
+  useEffect(() => {
+    setUser(getStoredUser());
+    setSelectedChild(getSelectedChildId() || "");
+    if (typeof window !== "undefined" && window.localStorage.getItem("token")) {
+      fetchChildProfiles()
+        .then((profiles) => {
+          setChildren(profiles);
+          if (!getSelectedChildId() && profiles[0]?.id) {
+            setSelectedChildId(profiles[0].id);
+            setSelectedChild(String(profiles[0].id));
+          }
+        })
+        .catch(() => setChildren([]));
+    }
+  }, [pathname]);
+
+  async function onLogout() {
+    await logoutParent();
+    router.push("/login");
+  }
 
   return (
     <aside className="sticky top-6 hidden h-[calc(100vh-3rem)] w-72 shrink-0 flex-col rounded-[32px] border border-white/80 bg-white/80 p-4 shadow-2xl shadow-sky-200/55 backdrop-blur lg:flex">
@@ -79,9 +106,29 @@ export function DesktopSidebar() {
           </div>
           <div>
             <p className="text-sm font-extrabold text-sky-950">Mom's Care Space</p>
-            <p className="text-xs font-bold text-sky-500">Ready to help today</p>
+            <p className="text-xs font-bold text-sky-500">{user?.name || "Ready to help today"}</p>
           </div>
         </div>
+        {children.length > 0 ? (
+          <select
+            value={selectedChild}
+            onChange={(event) => {
+              setSelectedChild(event.target.value);
+              setSelectedChildId(event.target.value);
+            }}
+            className="mt-3 w-full rounded-2xl border border-sky-100 bg-white px-3 py-3 text-xs font-extrabold text-sky-700 outline-none"
+          >
+            {children.map((child) => (
+              <option key={child.id} value={child.id}>
+                {child.name}, {child.age} yrs
+              </option>
+            ))}
+          </select>
+        ) : (
+          <Link href="/profile" className="mt-3 block rounded-2xl bg-white px-3 py-3 text-center text-xs font-extrabold text-care-blue">
+            Add child profile
+          </Link>
+        )}
       </div>
 
       <nav className="mt-5 grid gap-2">
@@ -113,6 +160,13 @@ export function DesktopSidebar() {
           </p>
         </div>
         <EmergencyShortcut className="w-full py-4" />
+        <button
+          onClick={onLogout}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-extrabold text-sky-500 shadow-sm transition hover:text-rose-500"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </button>
       </div>
     </aside>
   );
