@@ -1,7 +1,9 @@
 import axios from "axios";
 
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://zoctor.eventsbyan.com";
+
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "",
+  baseURL: API_BASE_URL,
   timeout: 20000,
 });
 

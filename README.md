@@ -13,4 +13,4 @@ npm run dev
 
 - Framework Preset: Next.js
 - Build Command: `npm run build`
-- Environment Variable: `NEXT_PUBLIC_API_URL`
+- Environment Variable: `NEXT_PUBLIC_API_URL=https://zoctor.eventsbyan.com`
